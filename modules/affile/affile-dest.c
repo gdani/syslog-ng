@@ -419,7 +419,12 @@ affile_dd_reuse_writer(gpointer key, gpointer value, gpointer user_data)
   AFFileDestWriter *writer = (AFFileDestWriter *) value;
   
   affile_dw_set_owner(writer, self);
-  log_pipe_init(&writer->super, NULL);
+  if (!log_pipe_init(&writer->super, NULL))
+    {
+      affile_dw_set_owner(writer, NULL);
+      log_pipe_unref(&writer->super);
+      g_hash_table_remove(self->writer_hash, key);
+    }
 }
 
 
@@ -452,11 +457,14 @@ affile_dd_init(LogPipe *s)
       if (self->single_writer)
         {
           affile_dw_set_owner(self->single_writer, self);
-          log_pipe_init(&self->single_writer->super, cfg);
+          if (!log_pipe_init((LogPipe *) self->single_writer, cfg))
+            {
+              log_pipe_unref((LogPipe *) self->single_writer);
+              return FALSE;
+            }
         }
     }
-  
-  
+
   return TRUE;
 }
 
