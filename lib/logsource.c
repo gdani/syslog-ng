@@ -49,7 +49,7 @@ log_source_wakeup(LogSource *self)
  * be taken when manipulating the LogSource data structure.
  **/
 static void
-log_source_msg_ack(LogMessage *msg, gpointer user_data)
+log_source_msg_ack(LogMessage *msg, gpointer user_data, AckType ack_type)
 {
   LogSource *self = (LogSource *) user_data;
   guint32 old_window_size;
