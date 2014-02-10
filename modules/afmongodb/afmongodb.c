@@ -451,15 +451,16 @@ static gboolean
 afmongodb_worker_insert (LogThrDestDriver *s)
 {
   MongoDBDestDriver *self = (MongoDBDestDriver *)s;
-  gboolean success, need_drop = self->template_options.on_error & ON_ERROR_DROP_MESSAGE;
+  gboolean success = TRUE;
+  gboolean need_drop = self->template_options.on_error & ON_ERROR_DROP_MESSAGE;
   guint8 *oid;
-  LogMessage *msg;
+  LogMessage *msg = NULL;
   LogPathOptions path_options = LOG_PATH_OPTIONS_INIT;
 
   afmongodb_dd_connect(self, TRUE);
 
-  success = log_queue_pop_head(self->super.queue, &msg, &path_options, FALSE, FALSE);
-  if (!success)
+  msg = log_queue_pop_head(self->super.queue, &path_options);
+  if (!msg)
     return TRUE;
 
   msg_set_context(msg);
