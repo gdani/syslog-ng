@@ -63,6 +63,8 @@ struct _LogProtoClient
   LogProtoStatus status;
   const LogProtoClientOptions *options;
   LogTransport *transport;
+  gboolean keep_one_message;
+  guint pending_ack_count;
   /* FIXME: rename to something else */
   gboolean (*prepare)(LogProtoClient *s, gint *fd, GIOCondition *cond);
   LogProtoStatus (*post)(LogProtoClient *s, guchar *msg, gsize msg_len, gboolean *consumed);
@@ -134,6 +136,12 @@ static inline void
 log_proto_client_reset_error(LogProtoClient *s)
 {
   s->status = LPS_SUCCESS;
+}
+
+static inline void
+log_proto_client_set_keep_one_message(LogProtoClient *s, gboolean value)
+{
+  s->keep_one_message = value;
 }
 
 gboolean log_proto_client_validate_options(LogProtoClient *self);

@@ -38,8 +38,27 @@ log_proto_text_client_prepare(LogProtoClient *s, gint *fd, GIOCondition *cond)
   return self->partial != NULL;
 }
 
+static inline void
+log_proto_text_client_do_pending_acks(LogProtoTextClient *self)
+{
+  if (self->super.pending_ack_count > 0)
+    {
+      log_proto_client_msg_ack(&self->super, self->super.pending_ack_count);
+      self->super.pending_ack_count = 0;
+    }
+}
+
+static inline void
+log_proto_text_client_do_ack(LogProtoTextClient *self)
+{
+  if (self->super.keep_one_message && self->super.pending_ack_count < 1)
+    self->super.pending_ack_count++;
+  else
+    log_proto_client_msg_ack(&self->super, 1);
+}
+
 static LogProtoStatus
-log_proto_text_client_flush(LogProtoClient *s)
+log_proto_text_client_flush_buffer(LogProtoClient *s)
 {
   LogProtoTextClient *self = (LogProtoTextClient *) s;
   gint rc;
@@ -78,13 +97,23 @@ log_proto_text_client_flush(LogProtoClient *s)
               self->next_state = -1;
             }
 
-          log_proto_client_msg_ack(&self->super, 1);
+          log_proto_text_client_do_ack(self);
 
           /* NOTE: we return here to give a chance to the framed protocol to send the frame header. */
           return LPS_SUCCESS;
         }
     }
   return LPS_SUCCESS;
+}
+
+static LogProtoStatus
+log_proto_text_client_flush(LogProtoClient *s)
+{
+  LogProtoTextClient *self = (LogProtoTextClient *) s;
+  LogProtoStatus status = log_proto_text_client_flush_buffer(s);
+
+  log_proto_text_client_do_pending_acks(self);
+  return status;
 }
 
 LogProtoStatus
@@ -98,7 +127,7 @@ log_proto_text_client_submit_write(LogProtoClient *s, guchar *msg, gsize msg_len
   self->partial_pos = 0;
   self->partial_free = msg_free;
   self->next_state = next_state;
-  return log_proto_text_client_flush(s);
+  return log_proto_text_client_flush_buffer(s);
 }
 
 
@@ -121,7 +150,7 @@ log_proto_text_client_post(LogProtoClient *s, guchar *msg, gsize msg_len, gboole
 
   /* try to flush already buffered data */
   *consumed = FALSE;
-  rc = log_proto_text_client_flush(s);
+  rc = log_proto_text_client_flush_buffer(s);
   if (rc == LPS_ERROR)
     {
       /* log_proto_flush() already logs in the case of an error */
@@ -148,6 +177,13 @@ log_proto_text_client_post(LogProtoClient *s, guchar *msg, gsize msg_len, gboole
   return log_proto_text_client_submit_write(s, msg, msg_len, (GDestroyNotify) g_free, -1);
 }
 
+static void
+log_proto_text_client_free(LogProtoClient *s)
+{
+  LogProtoTextClient *self = (LogProtoTextClient *)s;
+  log_proto_text_client_do_pending_acks(self);
+}
+
 void
 log_proto_text_client_init(LogProtoTextClient *self, LogTransport *transport, const LogProtoClientOptions *options)
 {
@@ -155,6 +191,7 @@ log_proto_text_client_init(LogProtoTextClient *self, LogTransport *transport, co
   self->super.prepare = log_proto_text_client_prepare;
   self->super.flush = log_proto_text_client_flush;
   self->super.post = log_proto_text_client_post;
+  self->super.free_fn = log_proto_text_client_free;
   self->super.transport = transport;
   self->next_state = -1;
 }

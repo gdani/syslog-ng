@@ -49,6 +49,8 @@ log_proto_client_init(LogProtoClient *self, LogTransport *transport, const LogPr
   self->free_fn = log_proto_client_free_method;
   self->options = options;
   self->transport = transport;
+  self->keep_one_message = FALSE;
+  self->pending_ack_count = 0;
 }
 
 gboolean

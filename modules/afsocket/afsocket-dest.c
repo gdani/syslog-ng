@@ -175,6 +175,7 @@ afsocket_dd_connected(AFSocketDestDriver *self)
 
   proto = log_proto_client_factory_construct(self->proto_factory, transport, &self->writer_options.proto_options.super);
 
+  log_proto_client_set_keep_one_message(proto, TRUE);
   log_writer_reopen(self->writer, proto);
   return TRUE;
  error_reconnect:
