@@ -1065,7 +1065,7 @@ log_writer_write_message(LogWriter *self, LogMessage *msg, LogPathOptions *path_
 
       log_msg_unref(msg);
       msg_set_context(NULL);
-      log_msg_refcache_stop(AT_PROCESSED);
+      log_msg_refcache_stop();
 
       return TRUE;
   }
@@ -1079,7 +1079,7 @@ log_writer_write_message(LogWriter *self, LogMessage *msg, LogPathOptions *path_
 
       log_msg_unref(msg);
       msg_set_context(NULL);
-      log_msg_refcache_stop(AT_ABORTED);
+      log_msg_refcache_stop();
 
       return FALSE;
     }
