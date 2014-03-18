@@ -116,10 +116,10 @@ test_macros(void)
   assert_template_format("$UNIXTIME", "1139650496.000");
   assert_template_format("$TZOFFSET", "+01:00");
   assert_template_format("$TZ", "+01:00");
-  assert_template_format("$R_DATE", "Feb 11 19:58:35.639");
-  assert_template_format("$R_FULLDATE", "2006 Feb 11 19:58:35.639");
-  assert_template_format("$R_ISODATE", "2006-02-11T19:58:35.639+01:00");
-  assert_template_format("$R_STAMP", "Feb 11 19:58:35.639");
+  assert_template_format("$R_DATE", "Feb 11 18:58:35.639");
+  assert_template_format("$R_FULLDATE", "2006 Feb 11 18:58:35.639");
+  assert_template_format("$R_ISODATE", "2006-02-11T18:58:35.639+00:00");
+  assert_template_format("$R_STAMP", "Feb 11 18:58:35.639");
   assert_template_format("$R_YEAR", "2006");
   assert_template_format("$R_YEAR_DAY", "042");
   assert_template_format("$R_MONTH", "02");
@@ -127,7 +127,7 @@ test_macros(void)
   assert_template_format("$R_MONTH_ABBREV", "Feb");
   assert_template_format("$R_MONTH_NAME", "February");
   assert_template_format("$R_DAY", "11");
-  assert_template_format("$R_HOUR", "19");
+  assert_template_format("$R_HOUR", "18");
   assert_template_format("$R_MIN", "58");
   assert_template_format("$R_SEC", "35");
   assert_template_format("$R_WEEKDAY", "Sat");
@@ -136,8 +136,8 @@ test_macros(void)
   assert_template_format("$R_WEEK_DAY_ABBREV", "Sat");
   assert_template_format("$R_WEEK", "06");
   assert_template_format("$R_UNIXTIME", "1139684315.639");
-  assert_template_format("$R_TZOFFSET", "+01:00");
-  assert_template_format("$R_TZ", "+01:00");
+  assert_template_format("$R_TZOFFSET", "+00:00");
+  assert_template_format("$R_TZ", "+00:00");
   assert_template_format("$S_DATE", "Feb 11 10:34:56.000");
   assert_template_format("$S_FULLDATE", "2006 Feb 11 10:34:56.000");
   assert_template_format("$S_ISODATE", "2006-02-11T10:34:56.000+01:00");
