@@ -250,6 +250,7 @@ testcase_with_threads()
     {
       fprintf(stderr,"starting testrun: %d\n",i);
       q = log_queue_fifo_new(MESSAGES_SUM, NULL);
+      log_queue_set_use_backlog(q, TRUE);
 
       for (j = 0; j < FEEDERS; j++)
         {
