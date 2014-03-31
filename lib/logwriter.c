@@ -161,7 +161,8 @@ log_writer_set_queue(LogWriter *s, LogQueue *queue)
     log_queue_unref(self->queue);
 
   self->queue = queue;
-  log_queue_set_use_backlog(self->queue, TRUE);
+  if (self->queue)
+    log_queue_set_use_backlog(self->queue, TRUE);
 }
 
 static void
