@@ -43,6 +43,8 @@
 #define STRPTIME_ISOFORMAT "%Y-%m-%d T%H:%M:%S"
 #endif
 
+/* This is another test comment !!! BLA BLA BLA*/
+
 static const char aix_fwd_string[] = "Message forwarded from ";
 static const char repeat_msg_string[] = "last message repeated";
 static NVHandle is_synced;

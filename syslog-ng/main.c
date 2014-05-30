@@ -82,6 +82,8 @@ static GOptionEntry syslogng_options[] =
 
 #define INSTALL_DAT_INSTALLER_VERSION "INSTALLER_VERSION"
 
+/* This is a test comment */
+
 static void
 interactive_mode(void)
 {
